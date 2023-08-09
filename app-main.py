@@ -1,9 +1,8 @@
-import os
 import configparser
 import logging.handlers
 import sys
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template
 from libraries.security import Cryptography
 from libraries.database import PostgreSQL
 

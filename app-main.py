@@ -10,6 +10,14 @@ def login():
     key = crypto.get_key()
     return render_template('login.htm', value={'key': key})
 
+@app.route('/authenticate', methods=['POST'])
+def authenticate_login():
+    pass
+
+@app.route('/logout', methods=['POST', 'GET'])
+def terminate_login():
+    pass
+
 
 if __name__ == "__main__":
     app.run()

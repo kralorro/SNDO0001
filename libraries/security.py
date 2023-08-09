@@ -25,12 +25,4 @@ class Cryptography:
 
 
 if __name__ == "__main__":
-    c = Cryptography()
-    x = c.encrypt('Kent')
-
-    print(x)
-    key = c.get_key()
-
-    c1 = Cryptography(key)
-    y = c1.decrypt(x)
-    print(y)
+    print("security.py version 1.0.0")

@@ -13,5 +13,5 @@ if __name__ == '__main__':
         config['POSTGRES']['password'],
         config['POSTGRES']['port'])
     sql = "select * from users"
-    print(test.execute_query(sql)[0)
+    print(test.execute_query(sql)[1])
 

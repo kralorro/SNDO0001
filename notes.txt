@@ -1,0 +1,8 @@
+# activate virtual environment
+cd /Projects/Purchasing/venv  PATH_TO_VIRTUAL_ENV
+source bin/activate
+
+# restart postgres
+sudo systemctl restart postgresql
+
+pip install psycopg2-binary

@@ -26,33 +26,42 @@ class PostgreSQL:
         self.__port = dbport
 
     def __connect(self):
-        conn = psycopg2.connect(
-            database=self.__db,
-            host=self.__ip,
-            user=self.__user,
-            password=self.__pass,
-            port=self.__port)
-        return conn
+        try:
+            conn = psycopg2.connect(
+                database=self.__db,
+                host=self.__ip,
+                user=self.__user,
+                password=self.__pass,
+                port=self.__port)
+            return conn
+        except ConnectionError as e:
+            return FAILURE
 
     def execute_query(self, sql, return_one=False):
         conn = self.__connect()
-        cur = conn.cursor()
-        cur.execute(sql)
-
-        if return_one:
-            ret = [SUCCESS, cur.fetchone()]
+        if conn == FAILURE:
+            ret = [FAILURE, ()]
         else:
-            ret = [SUCCESS, cur.fetchall()]
-        conn.close()
+            cur = conn.cursor()
+            cur.execute(sql)
+
+            if return_one:
+                ret = [SUCCESS, cur.fetchone()]
+            else:
+                ret = [SUCCESS, cur.fetchall()]
+            conn.close()
         return ret
 
     def execute_dml(self, sql):
         conn = self.__connect()
-        cur = conn.cursor()
-        cur.execute(sql)
-        conn.commit()
-        conn.close()
-        return SUCCESS
+        if conn == FAILURE:
+            return FAILURE
+        else:
+            cur = conn.cursor()
+            cur.execute(sql)
+            conn.commit()
+            conn.close()
+            return SUCCESS
 
 
 # Class for handling DB transactions to a SQLite3

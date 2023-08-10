@@ -1,2 +1,57 @@
-<h2>The generated cipher key is </h2>
-<h1>{{ value.get('key') }}</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{{ session['company'] }}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="{{ url_for('static', filename='logo_1.png') }}">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet" type="text/css">
+<body>
+    <form enctype=multipart/form-data action="/authenticate" method="POST">
+        <table width=30% align="center">
+            <tr>
+                <td height="200" align="center">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" height="150" align="center">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="table table-condensed" >
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>Username</label>
+                                    <input type=text name="user-name" class="form-control" placeholder="User Name" required>
+                                </div>
+                                <div>
+                                    <label>Password</label>
+                                    <input type=password name="pass-word" class="form-control" placeholder="Password" required>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="height: 100px; align:center">
+                                    <button type="submit" name="login" class="btn btn-success" value="Login">Authenticate</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span style="font-size: 11px; color:gray;">
+                                This system is for authorized user only. Unauthorized access or violations of the terms of use may subject to administrative disciplinary action.
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

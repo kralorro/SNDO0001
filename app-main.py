@@ -2,9 +2,13 @@ import configparser
 import logging.handlers
 import sys
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from libraries.security import Cryptography
 from libraries.database import PostgreSQL
+
+# response codes
+SUCCESS = 1
+FAILURE = 0
 
 app = Flask(__name__)
 
@@ -36,11 +40,24 @@ database = PostgreSQL(
 def login():
     crypto = Cryptography()
     key = crypto.get_key()
-    return render_template('login.htm', value={'key': key})
+    return render_template('login.htm', value=dict(stat=0, msg=""))
 
 @app.route('/authenticate', methods=['POST'])
 def authenticate_login():
-    pass
+    if request.method == 'POST':
+        user  = request.form['uname']
+        pword = request.form['pword']
+
+        auth_sql = config['SQL']['auth'].format(user, pword)
+        res = database.execute_query(auth_sql)
+
+        if res[0] == SUCCESS:
+            if res[1][0][0] < 1:
+                val = dict(stat=1, msg=config['ERR']['inv_cred'])
+        else:
+            val = dict(stat=1, msg=config['ERR']['pg_error'].format(config['POSTGRES']['ip']))
+
+    return render_template('login.htm', value=val)
 
 @app.route('/logout', methods=['POST', 'GET'])
 def terminate_login():

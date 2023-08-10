@@ -18,6 +18,17 @@
                     <img src="{{ url_for('static', filename='img/logo.png') }}" height="150" align="center">
                 </td>
             </tr>
+            {% if value.get('stat') == 0 %}
+            <tr>
+                <td></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td align="center" height="30" style="background-color:#e5a890">
+                    {{ value.get('msg') }}
+                </td>
+            </tr>
+            {% endif %}
             <tr>
                 <td>
                     <table class="table table-condensed" >
@@ -25,11 +36,11 @@
                             <td>
                                 <div>
                                     <label>Username</label>
-                                    <input type=text name="user-name" class="form-control" placeholder="User Name" required>
+                                    <input type=text name="uname" class="form-control" placeholder="User Name" required>
                                 </div>
                                 <div>
                                     <label>Password</label>
-                                    <input type=password name="pass-word" class="form-control" placeholder="Password" required>
+                                    <input type=password name="pword" class="form-control" placeholder="Password" required>
                                 </div>
 
                             </td>

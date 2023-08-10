@@ -1,20 +1,26 @@
 import configparser
 import logging.handlers
+import os
 import sys
 
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, session, redirect
+from libraries.respcode import *
 from libraries.security import Cryptography
 from libraries.database import PostgreSQL
 
-# response codes
-SUCCESS = 1
-FAILURE = 0
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
-config = configparser.ConfigParser()
-config.read('app-config.ini')
+# initialize configuration file loading
+try:
+    config = configparser.ConfigParser()
+    config.read('app-config.ini')
+except FileNotFoundError as e:
+    print("ERROR: Could not initialize configuration setup. Please check access to app-config.ini.")
+    sys.exit(0)
 
+# initialize logging handlers
 try:
     log_file = config['LOG']['filename']
     logger = logging.getLogger('LOG')
@@ -23,12 +29,11 @@ try:
     fmtr = logging.Formatter('%(asctime)s | %(message)s')
     rfh.setFormatter(fmtr)
     logger.addHandler(rfh)
-
 except FileNotFoundError as e:
-    print("ERROR: Could not initialize logging handlers.")
+    print("ERROR: Could not initialize logging handlers. Please check if {} exist".format(log_file))
     sys.exit(0)
 
-
+# instatiate the PostgreSQL object for DB transactions
 database = PostgreSQL(
     config['POSTGRES']['dbname'],
     config['POSTGRES']['ip'],
@@ -54,6 +59,12 @@ def authenticate_login():
         if res[0] == SUCCESS:
             if res[1][0][0] < 1:
                 val = dict(stat=1, msg=config['ERR']['inv_cred'])
+            else:
+                session['username'] = user
+                last_login = config['SQL']['login'].format(user)
+                database.execute_dml(last_login)
+
+                render_template('home.htm')
         else:
             val = dict(stat=1, msg=config['ERR']['pg_error'].format(config['POSTGRES']['ip']))
 
@@ -61,7 +72,8 @@ def authenticate_login():
 
 @app.route('/logout', methods=['POST', 'GET'])
 def terminate_login():
-    pass
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 
 if __name__ == "__main__":

@@ -8,14 +8,22 @@ from libraries.respcode import *
 from libraries.security import Cryptography
 from libraries.database import PostgreSQL
 
-
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # initialize configuration file loading
 try:
+    db_config = {}
     config = configparser.ConfigParser()
-    config.read('app-config.ini')
+    config.read('config/app-config.ini')
+
+    if config.has_section('POSTGRES'):
+        params = config.items('POSTGRES')
+        for param in params:
+            db_config[param[0]] = param[1]
+    else:
+        print("ERROR: Could not initialize database with provided configuration. Please check entries in app-config.ini.")
+        sys.exit(0)
 except FileNotFoundError as e:
     print("ERROR: Could not initialize configuration setup. Please check access to app-config.ini.")
     sys.exit(0)
@@ -33,13 +41,7 @@ except FileNotFoundError as e:
     print("ERROR: Could not initialize logging handlers. Please check if {} exist".format(log_file))
     sys.exit(0)
 
-# instatiate the PostgreSQL object for DB transactions
-database = PostgreSQL(
-    config['POSTGRES']['dbname'],
-    config['POSTGRES']['ip'],
-    config['POSTGRES']['username'],
-    config['POSTGRES']['password'],
-    config['POSTGRES']['port'])
+database = PostgreSQL(db_config)
 
 @app.route('/')
 def login():

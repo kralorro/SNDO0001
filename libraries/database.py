@@ -18,21 +18,13 @@ FAILURE = 0
 # Class for handling DB transactions to a PostgreSQL
 class PostgreSQL:
 
-    def __init__(self, dbname, dbhost, dbuser, dbpass, dbport):
-        self.__db = dbname
-        self.__ip = dbhost
-        self.__user = dbuser
-        self.__pass = dbpass
-        self.__port = dbport
+    def __init__(self, db_config):
+        self.__dbconfig = db_config
 
     def __connect(self):
         try:
-            conn = psycopg2.connect(
-                database=self.__db,
-                host=self.__ip,
-                user=self.__user,
-                password=self.__pass,
-                port=self.__port)
+            conn = psycopg2.connect(**self.__dbconfig)
+
             return conn
         except ConnectionError as e:
             return FAILURE

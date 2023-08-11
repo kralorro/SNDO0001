@@ -5,14 +5,17 @@ from libraries.security import Cryptography
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read('app-config.ini')
-    print(config['POSTGRES']['ip'])
+    print(config['POSTGRES']['host'])
 
-    test = PostgreSQL(
-        config['POSTGRES']['dbname'],
-        config['POSTGRES']['ip'],
-        config['POSTGRES']['username'],
-        config['POSTGRES']['password'],
-        config['POSTGRES']['port'])
+    db_config = dict(
+        database=config['POSTGRES']['database'],
+        host=config['POSTGRES']['host'],
+        user=config['POSTGRES']['user'],
+        password=config['POSTGRES']['password'],
+        port=config['POSTGRES']['port'])
+
+    test = PostgreSQL(db_config)
+
     sql = "select * from users"
     print(test.execute_query(sql)[1])
 
